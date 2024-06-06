@@ -22,6 +22,7 @@
         <ul>
           <li><a href="{% url 'home' %}">Home</a></li>
           {% if user.is_authenticated %}
+          <li><a href="{% url 'journals_index' %}">Journals</a></li>
             <li>
               <a href="#">
                 <form method="post" action="{% url 'logout' %}">

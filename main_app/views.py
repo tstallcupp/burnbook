@@ -7,6 +7,8 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.generic import ListView
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 
+from .models import Journal
+
 # Create your views here.
 def signup(request):
   error_message = ''
@@ -28,6 +30,11 @@ def signup(request):
   return render(request, 'registration/signup.html', context)
 
 
-
 def home(request):
     return render(request, 'home.html')
+
+
+def journals_index(request):
+  journals = Journal.objects.filter(user=request.user)
+  user = request.user
+  return render(request, 'journals/index.html', { 'journals': journals, 'user': user })
