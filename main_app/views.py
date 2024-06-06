@@ -8,7 +8,7 @@ from django.views.generic import ListView
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 
 from .models import Journal
-from .forms import JournalForm
+from .forms import JournalForm, EntryForm
 
 # Create your views here.
 def signup(request):
@@ -70,4 +70,22 @@ def journals_detail(request, journal_id):
     return render(request, 'journals/detail.html', {
     'journal': journal,
     'entries': entries,
+  })
+
+
+@login_required
+def add_entry(request, journal_id):
+  error_message = ''
+  entry_form = EntryForm(request.POST)
+  journal = journal_id
+  if entry_form.is_valid():
+    new_entry = entry_form.save(commit=False)
+    new_entry.journal_id = journal
+    new_entry.save()
+    return redirect('detail', journal_id=journal_id)
+  else:
+    error_message = "Invalid entry creation - try again"
+  return render(request, 'journals/entry_form.html', { 
+    'entry_form': entry_form,
+    'error_message': error_message
   })

@@ -3,7 +3,7 @@
 
 <h1>Journal: {{ journal.name }} 
   <span class="right">
-    <a href="" class="btn-floating btn-large waves-effect waves-light red"><i class="material-icons">add</i></a>
+    <a href="{% url 'add_entry' journal.id %}" class="btn-floating btn-large waves-effect waves-light red"><i class="material-icons">add</i></a>
   </span>
 </h1>
 
