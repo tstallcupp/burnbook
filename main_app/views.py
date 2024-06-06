@@ -8,6 +8,7 @@ from django.views.generic import ListView
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 
 from .models import Journal
+from .forms import JournalForm
 
 # Create your views here.
 def signup(request):
@@ -38,3 +39,35 @@ def journals_index(request):
   journals = Journal.objects.filter(user=request.user)
   user = request.user
   return render(request, 'journals/index.html', { 'journals': journals, 'user': user })
+
+
+@login_required
+def journals_create(request):
+  error_message = ''
+  journal_form = JournalForm(request.POST)
+  user = request.user.id
+  if journal_form.is_valid():
+    new_journal = journal_form.save(commit=False)
+    new_journal.user_id = user
+    new_journal.save()
+    return redirect(journals_index)
+  else:
+    error_message = "Invalid journal creation - try again"
+  return render(request, 'journals/journal_form.html', { 
+    'journal_form': journal_form,
+    'error_message': error_message
+  })
+
+@login_required
+def journals_detail(request, journal_id):
+  journal = Journal.objects.get(id=journal_id)
+  if journal.has_no_entries():
+    return render(request, 'journals/detail.html', {
+    'journal': journal,
+  })
+  elif journal.has_entries():
+    entries = journal.entry_set.all()
+    return render(request, 'journals/detail.html', {
+    'journal': journal,
+    'entries': entries,
+  })
